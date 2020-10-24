@@ -20,9 +20,27 @@ class ProfilePage extends StatelessWidget {
     return jresponse['data'][0];
   }
 
+  Future<bool> useTicket(String session, String userid, String ticketid) async {
+    final url =
+        'https://genapi.bluapps.in/Serv_v3/club_use?user_id=$userid&session_id=$session&ticketid=$ticketid';
+    final response = await http.get(url);
+    final jresponse = json.decode(response.body);
+    if (jresponse['status'] == 'failed') throw jresponse['message'];
+    return jresponse['status'] == 'success';
+  }
+
   static const routeName = '/profilePage';
+
   @override
   Widget build(BuildContext context) {
+    const Map colors = {
+      'green': Colors.green,
+      'yellow': Colors.yellow,
+      'blue': Colors.blue,
+      'black': Colors.black,
+      'purple': Colors.purple,
+      'red': Colors.red
+    };
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final prov = Provider.of<Auth>(context, listen: false);
@@ -155,18 +173,34 @@ class ProfilePage extends StatelessWidget {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Text(
-                                        'PKRZE',
+                                        snapshot.data['ticket_no'],
                                         style: GoogleFonts.openSans(
                                             fontSize: 21,
                                             fontWeight: FontWeight.w600),
                                       )
                                     ],
                                   ),
-                                  MaterialButton(
-                                    color: Colors.yellow[800],
-                                    child: Text('Member'),
-                                    onPressed: () {},
-                                  )
+                                  snapshot.data['showbtn'] == 'Y'
+                                      ? MaterialButton(
+                                          color: colors[snapshot
+                                              .data['btncolor']
+                                              .toLowerCase()],
+                                          child: Text(snapshot.data['btntxt']),
+                                          onPressed: () => useTicket(
+                                                  session,
+                                                  userid,
+                                                  snapshot.data['ticketid'])
+                                              .then((value) => Scaffold.of(
+                                                      context)
+                                                  .showSnackBar(SnackBar(
+                                                      content:
+                                                          Text('Ticket Used'))))
+                                              .catchError((e) => showDialog(
+                                                  context: context,
+                                                  child:
+                                                      Alertbox(e.toString()))),
+                                        )
+                                      : SizedBox()
                                 ],
                               ),
                               Divider(),
@@ -209,7 +243,7 @@ class ProfilePage extends StatelessWidget {
                                               color: Colors.grey[600],
                                               fontWeight: FontWeight.bold)),
                                       Text(
-                                        '1',
+                                        snapshot.data['no_of_member'],
                                         style: GoogleFonts.openSans(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600),

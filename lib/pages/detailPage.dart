@@ -1,12 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+
+import '../providers/auth.dart';
+import '../widgets/alertBox.dart';
 
 class DetailPage extends StatelessWidget {
+  Future<bool> useTicket(String session, String userid, String ticketid) async {
+    final url =
+        'https://genapi.bluapps.in/Serv_v3/club_use?user_id=$userid&session_id=$session&ticketid=$ticketid';
+    final response = await http.get(url);
+    final jresponse = json.decode(response.body);
+    if (jresponse['status'] == 'failed') throw jresponse['message'];
+    return jresponse['status'] == 'success';
+  }
+
   static const routeName = 'detailPage';
   @override
   Widget build(BuildContext context) {
+    const Map colors = {
+      'green': Colors.green,
+      'yellow': Colors.yellow,
+      'blue': Colors.blue,
+      'black': Colors.black,
+      'purple': Colors.purple,
+      'red': Colors.red
+    };
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final prov = Provider.of<Auth>(context, listen: false);
+    final String session = prov.session, userid = prov.userid;
     final Map element = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(title: Text('Details')),
@@ -117,7 +142,27 @@ class DetailPage extends StatelessWidget {
                     element['timing'],
                     style: GoogleFonts.openSans(
                         fontSize: 32, fontWeight: FontWeight.w600),
-                  )
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  element['showbtn'] == 'Y'
+                      ? MaterialButton(
+                          color: colors[element['btncolor'].toLowerCase()],
+                          child: Text(
+                            element['btntxt'],
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () => useTicket(
+                                  session, userid, element['ticketid'])
+                              .then((value) => Scaffold.of(context)
+                                  .showSnackBar(
+                                      SnackBar(content: Text('Ticket Used'))))
+                              .catchError((e) => showDialog(
+                                  context: context,
+                                  child: Alertbox(e.toString()))),
+                        )
+                      : SizedBox()
                 ],
               ),
             )
