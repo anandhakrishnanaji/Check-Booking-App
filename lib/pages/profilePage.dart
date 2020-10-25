@@ -9,6 +9,8 @@ import 'dart:convert';
 import '../widgets/alertBox.dart';
 import '../providers/auth.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+
 class ProfilePage extends StatelessWidget {
   Future<Map> obtainDetails(
       String session, String userid, String qrtext) async {
@@ -47,6 +49,7 @@ class ProfilePage extends StatelessWidget {
     final String qrtext = ModalRoute.of(context).settings.arguments;
     final String session = prov.session, userid = prov.userid;
     return Scaffold(
+        key: _scaffoldkey,
         body: FutureBuilder(
             future: obtainDetails(session, userid, qrtext),
             builder: (_, snapshot) {
@@ -129,7 +132,7 @@ class ProfilePage extends StatelessWidget {
                                         height: 7,
                                       ),
                                       Text(
-                                        'Demo Club',
+                                        snapshot.data['address'],
                                         style: TextStyle(
                                             color: Colors.grey[600],
                                             fontWeight: FontWeight.bold),
@@ -190,8 +193,8 @@ class ProfilePage extends StatelessWidget {
                                                   session,
                                                   userid,
                                                   snapshot.data['ticketid'])
-                                              .then((value) => Scaffold.of(
-                                                      context)
+                                              .then((value) => _scaffoldkey
+                                                  .currentState
                                                   .showSnackBar(SnackBar(
                                                       content:
                                                           Text('Ticket Used'))))

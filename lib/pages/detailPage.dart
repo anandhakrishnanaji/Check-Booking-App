@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth.dart';
 import '../widgets/alertBox.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+
 class DetailPage extends StatelessWidget {
   Future<bool> useTicket(String session, String userid, String ticketid) async {
     final url =
@@ -17,7 +19,7 @@ class DetailPage extends StatelessWidget {
     return jresponse['status'] == 'success';
   }
 
-  static const routeName = 'detailPage';
+  static const routeName = '/detailPage';
   @override
   Widget build(BuildContext context) {
     const Map colors = {
@@ -34,6 +36,7 @@ class DetailPage extends StatelessWidget {
     final String session = prov.session, userid = prov.userid;
     final Map element = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      key: _scaffoldkey,
       appBar: AppBar(title: Text('Details')),
       body: Container(
         child: Column(
@@ -155,7 +158,7 @@ class DetailPage extends StatelessWidget {
                           ),
                           onPressed: () => useTicket(
                                   session, userid, element['ticketid'])
-                              .then((value) => Scaffold.of(context)
+                              .then((value) => _scaffoldkey.currentState
                                   .showSnackBar(
                                       SnackBar(content: Text('Ticket Used'))))
                               .catchError((e) => showDialog(
