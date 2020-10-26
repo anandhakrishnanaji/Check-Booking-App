@@ -44,7 +44,7 @@ class _ListPageState extends State<ListPage> {
         context: context,
         initialDate: selectedDate,
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime.now());
+        lastDate: DateTime(2100));
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
@@ -66,11 +66,17 @@ class _ListPageState extends State<ListPage> {
                 child: CircularProgressIndicator(),
               );
             else if (snapshot.hasError) {
-              Future.delayed(
-                  Duration.zero,
-                  () => showDialog(
-                      context: _, child: Alertbox(snapshot.error.toString())));
-              return SizedBox();
+              // Future.delayed(
+              //     Duration.zero,
+              //     () => showDialog(
+              //         context: _,
+              //         child: Alertbox(snapshot.error.toString(),
+              //             callback: () => Navigator.of(context)
+              //                 .popUntil(ModalRoute.withName("/")))));
+              return Center(
+                  child: Text(
+                snapshot.error.toString(),style: TextStyle(fontSize: 24),
+              ));
             } else {
               return SingleChildScrollView(
                 child: Column(
@@ -80,7 +86,7 @@ class _ListPageState extends State<ListPage> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) =>
-                          DataListTile(snapshot.data[index]),
+                          DataListTile(snapshot.data[index], index),
                     ),
                   ],
                 ),
@@ -90,9 +96,6 @@ class _ListPageState extends State<ListPage> {
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         animatedIconTheme: IconThemeData(size: 22.0),
-        // this is ignored if animatedIcon is non null
-        // child: Icon(Icons.add),
-        // visible: _dialVisible,
         curve: Curves.bounceIn,
         overlayColor: Colors.black,
         overlayOpacity: 0.5,

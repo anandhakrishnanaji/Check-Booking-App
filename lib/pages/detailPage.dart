@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
+import '../widgets/confirmationDialog.dart';
 
 import '../providers/auth.dart';
 import '../widgets/alertBox.dart';
@@ -37,139 +38,219 @@ class DetailPage extends StatelessWidget {
     final Map element = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       key: _scaffoldkey,
-      appBar: AppBar(title: Text('Details')),
       body: Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 0.3 * height,
-              width: double.infinity,
-              decoration: BoxDecoration(color: Colors.blue[900]),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: AssetImage('assets/usericon.jpg'),
-                    radius: 50,
-                  ),
-                  Text(element['name'],
-                      style: GoogleFonts.montserrat(
-                          color: Colors.white, fontSize: 28)),
-                  Text(element['membership_id'],
-                      style: GoogleFonts.montserrat(
-                          color: Colors.white, fontSize: 18))
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            'ADDRESS',
-                            style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            element['address'],
-                            style: GoogleFonts.openSans(
-                                fontSize: 21, fontWeight: FontWeight.w600),
-                          )
-                        ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 0.4 * height,
+                width: double.infinity,
+                decoration: BoxDecoration(color: Colors.blue[900]),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                      IconButton(
+                        color: Colors.white,
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () => Navigator.pop(context),
                       ),
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            'COURT',
-                            style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            element['court_name'],
-                            style: GoogleFonts.openSans(
-                                fontSize: 21, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            'SERVICE NAME',
-                            style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            element['service_name'],
-                            style: GoogleFonts.openSans(
-                                fontSize: 21, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            'SERVICE DATE',
-                            style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            element['service_date'],
-                            style: GoogleFonts.openSans(
-                                fontSize: 21, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Text(
-                    element['timing'],
-                    style: GoogleFonts.openSans(
-                        fontSize: 32, fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  element['showbtn'] == 'Y'
-                      ? MaterialButton(
-                          color: colors[element['btncolor'].toLowerCase()],
-                          child: Text(
-                            element['btntxt'],
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () => useTicket(
-                                  session, userid, element['ticketid'])
-                              .then((value) => _scaffoldkey.currentState
-                                  .showSnackBar(
-                                      SnackBar(content: Text('Ticket Used'))))
-                              .catchError((e) => showDialog(
-                                  context: context,
-                                  child: Alertbox(e.toString()))),
-                        )
-                      : SizedBox()
-                ],
+                    ]),
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(element['mem_photo']),
+                      radius: 70,
+                    ),
+                    Text(element['name'],
+                        style: GoogleFonts.montserrat(
+                            color: Colors.white, fontSize: 24)),
+                    Text(element['membership_id'],
+                        style: GoogleFonts.montserrat(
+                            color: Colors.white, fontSize: 17))
+                  ],
+                ),
               ),
-            )
-          ],
+              Container(
+                padding: EdgeInsets.all(25),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'ADDRESS',
+                                style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                element['address'],
+                                style: GoogleFonts.openSans(
+                                    fontSize: 21, fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'SERVICE NAME',
+                                style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                element['service_name'],
+                                style: GoogleFonts.openSans(
+                                    fontSize: 21, fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'SERVICE DATE',
+                                style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                element['service_date'],
+                                style: GoogleFonts.openSans(
+                                    fontSize: 21, fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'COURT',
+                                style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                element['court_name'],
+                                style: GoogleFonts.openSans(
+                                    fontSize: 21, fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'TIMING',
+                                style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                element['timing'],
+                                style: GoogleFonts.openSans(
+                                    fontSize: 21, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'NO. OF PERSON',
+                              style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              element['no_of_member'],
+                              style: GoogleFonts.openSans(
+                                  fontSize: 21, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    element['showbtn'] == 'Y'
+                        ? MaterialButton(
+                            padding: EdgeInsets.all(10),
+                            minWidth: 0.9 * width,
+                            color: colors[element['btncolor'].toLowerCase()],
+                            child: Text(
+                              element['btntxt'],
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () async {
+                              if (element['allowclick'] == 'Y')
+                                await showDialog(
+                                        context: context,
+                                        child: ConfirmationDialog())
+                                    .then((value) {
+                                  if (value)
+                                    useTicket(session, userid,
+                                            element['ticketid'])
+                                        .then((value) => _scaffoldkey
+                                            .currentState
+                                            .showSnackBar(SnackBar(
+                                                content: Text('Ticket Used'))))
+                                        .catchError((e) => showDialog(
+                                            context: context,
+                                            child: Alertbox(e.toString())));
+                                });
+                            },
+                          )
+                        : SizedBox()
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

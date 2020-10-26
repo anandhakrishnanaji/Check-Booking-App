@@ -45,8 +45,16 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Image.asset(
+                'assets/logo.png',
+                height: 150,
+                width: 150,
+              ),
+              SizedBox(
+                height: 35,
+              ),
               Text(
-                'CheckBooking ',
+                'Check Booking ',
                 style: GoogleFonts.overpass(color: Colors.white, fontSize: 45),
               ),
               SizedBox(
@@ -64,15 +72,10 @@ class _LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                     TextField(
                       controller: pno,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(10),
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
                       decoration: InputDecoration(
                           filled: true,
-                          hintText: 'Enter your Mobile Number',
-                          errorText:
-                              ispnoerror ? 'Invalid Mobile Number' : null,
+                          hintText: 'Enter your Username',
+                          errorText: ispnoerror ? 'Invalid Username' : null,
                           prefixIcon: Icon(Icons.account_circle),
                           fillColor: Colors.grey[300],
                           border: OutlineInputBorder(
@@ -115,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: () {
                                 print('kona');
                                 setState(() {
-                                  ispnoerror = pno.text.length != 10;
+                                  ispnoerror = pno.text.isEmpty;
                                   ispassworderror = password.text.isEmpty;
                                   print(ispnoerror);
                                   print(ispassworderror);

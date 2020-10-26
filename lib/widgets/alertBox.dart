@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class Alertbox extends StatelessWidget {
   final content;
-  Alertbox(this.content);
+  final callback;
+  Alertbox(this.content, {this.callback});
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
