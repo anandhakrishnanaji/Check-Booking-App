@@ -132,7 +132,8 @@ class _LoginPageState extends State<LoginPage> {
                                       .then((value) {
                                     if (value)
                                       Navigator.of(context)
-                                          .pushNamed(HomePage.routeName);
+                                          .pushReplacementNamed(
+                                              HomePage.routeName);
                                     setState(() {
                                       _isloading = false;
                                     });
